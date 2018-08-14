@@ -37,21 +37,23 @@ function openHours(open,closed) {
     } else {
       hours.push((h + open - 12) + 'pm');
     }
-    
     // Populate Customers, cookies, and totals per hour for each location
     for (var p = 0; p < allLoc.length; p++) {
-      // Customers
+      // Customers per hour
       var min = Math.ceil(allLoc[p].minCust);
       var max = Math.floor(allLoc[p].maxCust);
-      console.log(allLoc[p].name, min, max);
       allLoc[p].CustPerHr.push(Math.floor(Math.random() * (max - min + 1)) + min);
-      console.log(allLoc[p].CustPerHr);
 
       // Cookies Sold per hour
-      allLoc[p].cookiesPerHr.push(Math.ceil(allLoc[p].avgCookies * allLoc[p].CustPerHr));
-      
+      allLoc[p].cookiesPerHr.push(Math.ceil(allLoc[p].CustPerHr[h] * allLoc[p].avgCookies));
+      // console.log(allLoc[p].name, allLoc[p].cookiesPerHr[h]);
+
+      // Daily Totals
+      allLoc[p].totCookies += allLoc[p].cookiesPerHr[h];
+      console.log(allLoc[p].name, allLoc[p].cookiesPerHr[h],allLoc[p].totCookies)
+
     }
-    // Daily Totals
+   
   }
 }
 openHours(openHrs, closedHrs);
