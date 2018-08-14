@@ -1,10 +1,8 @@
 'use strict';
 
 // Global use variables
-var allLoc = [], hours = [];
-
-var openHrs = 6, closedHrs = 20;
-
+var allLoc = [], hoursOpen = [];//Arrays used globally
+var start = 6, finish = 20; //Hours of operation in 24hr format
 
 // Constructor fucntion called "Build" to create individual locations
 function Build(name, minCust, maxCust, avgCookies) {
@@ -25,17 +23,17 @@ var seattleCenter = new Build('Seattel Center', 11, 38, 3.7);
 var capitolHill = new Build('Capitol Hill', 20, 38, 2.3);
 var alki = new Build ('Alki', 2, 16, 4.6);
 
-// Fill hours array based on open and close times using 24hour clock to help determine am/pm
+// Fill in the additional required information
 
-function openHours(open,closed) {
+function fillInfo(open,closed) {
   for (var h = 0; h <= closed - open - 1; h++) {
-    //Fill Hours Array
+    //Fill Hours Array - 24hr clock to determine am/pm
     if (h + open < 12) {
-      hours.push(h + open + 'am');
+      hoursOpen.push(h + open + 'am');
     } else if (h + open === 12) {
-      hours.push(h + open + 'pm');
+      hoursOpen.push(h + open + 'pm');
     } else {
-      hours.push((h + open - 12) + 'pm');
+      hoursOpen.push((h + open - 12) + 'pm');
     }
     // Populate Customers, cookies, and totals per hour for each location
     for (var p = 0; p < allLoc.length; p++) {
@@ -46,14 +44,42 @@ function openHours(open,closed) {
 
       // Cookies Sold per hour
       allLoc[p].cookiesPerHr.push(Math.ceil(allLoc[p].CustPerHr[h] * allLoc[p].avgCookies));
-      // console.log(allLoc[p].name, allLoc[p].cookiesPerHr[h]);
 
-      // Daily Totals
-      allLoc[p].totCookies += allLoc[p].cookiesPerHr[h];
-      console.log(allLoc[p].name, allLoc[p].cookiesPerHr[h],allLoc[p].totCookies)
-
+      // Hourly, Daily and Grand Totals
+      // allCookiesHr[h] = allCookiesHr[h] + allLoc[p].cookiesPerHr[h]; //Hourly all locations
+      allLoc[p].totCookies += allLoc[p].cookiesPerHr[h]; //Daily per location
+      // grandTotCookies = grandTotCookies + allLoc[p].totCookies; //grand total all location
+      // console.log(grandTotCookies);
     }
-   
   }
 }
-openHours(openHrs, closedHrs);
+
+// create render routine to populate the table with location data
+var salesTable = document.getElementById('salesDate');//identify the table to put data in.
+
+Build.prototype.render = function(){
+
+  //number of rows is based on number of locations
+  var trEl, tdEl, thEl;
+  for (var l = 0; d < allLoc.length; d++){
+    trEl = document.createElement('tr'); //create the row
+    thEl = document.createElement('th'); //create the first column with name
+    thEl = document.textContent(allLoc[l].name);
+    trEl = document.appendChild(thEl);
+
+    for (var d = 0; d < allLoc[l].cookiesPerHr.length; l++){
+      tdEl = document.createElement('th'); //create the first column with name
+      tdEl = document.textContent(allLoc[l].name);
+      trEl = document.appendChild(tdEl);
+    }
+    salesTable.document.appendChild(trEl);
+  }
+
+};
+
+
+fillInfo(start, finish);
+
+for (var r = 0; r < allLoc.length; r++) {
+  allLoc[r].render();
+}
