@@ -28,22 +28,30 @@ var alki = new Build ('Alki', 2, 16, 4.6);
 // Fill hours array based on open and close times using 24hour clock to help determine am/pm
 
 function openHours(open,closed) {
-  for (var h = open; h <= closed - 1; h++) {
-    
+  for (var h = 0; h <= closed - open - 1; h++) {
     //Fill Hours Array
-    if (h < 12) {
-      hours.push(h + 'am');
-    } else if (h === 12) {
-      hours.push(h + 'pm');
+    if (h + open < 12) {
+      hours.push(h + open + 'am');
+    } else if (h + open === 12) {
+      hours.push(h + open + 'pm');
     } else {
-      hours.push((h - 12) + 'pm');
+      hours.push((h + open - 12) + 'pm');
     }
-    // Random number of Customers
+    
+    // Populate Customers, cookies, and totals per hour for each location
+    for (var p = 0; p < allLoc.length; p++) {
+      // Customers
+      var min = Math.ceil(allLoc[p].minCust);
+      var max = Math.floor(allLoc[p].maxCust);
+      console.log(allLoc[p].name, min, max);
+      allLoc[p].CustPerHr.push(Math.floor(Math.random() * (max - min + 1)) + min);
+      console.log(allLoc[p].CustPerHr);
 
-    // Cookies Sold
-
+      // Cookies Sold per hour
+      allLoc[p].cookiesPerHr.push(Math.ceil(allLoc[p].avgCookies * allLoc[p].CustPerHr));
+      
+    }
     // Daily Totals
   }
 }
 openHours(openHrs, closedHrs);
-console.log(hours);
