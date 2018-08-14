@@ -8,13 +8,13 @@ function openHours() {
   for (var h = 0; h <= closed - open; h++) {
     console.log (h, h+open);
     if (h + open < 12) {
-      hoursArray[h] = h + open + 'am:';
+      hoursArray[h] = h + open + 'am';
       console.log(h, hoursArray[h]);
     } else if ((h + open) === 12) {
-      hoursArray[h] = h + open + 'pm:';
+      hoursArray[h] = h + open + 'pm';
       console.log(h, hoursArray[h]);
     } else {
-      hoursArray[h] = h + open - 12 + 'pm:';
+      hoursArray[h] = h + open - 12 + 'pm';
       console.log(h,hoursArray[h]);
     }
   }
@@ -54,9 +54,21 @@ var firstAndPike = {
       }
       console.log(total);
       return total;
+    },
+  render: function() {
+    var marketUlel = document.getElementById('market');
+    for (var x = 0; x < hoursArray.length; x++) {
+      var liEl = document.createElement('li');
+      liEl.textContent = hoursArray[x] + ': ' + this.cookiesPerHour[x] + 'cookies';
+      marketUlel.appendChild(liEl);
     }
+    liEl = document.createElement('li');
+    liEl.textContent = 'Total Cookies: ' + this.totalCookies();
+    marketUlel.appendChild(liEl);
+  }
 };
-// populate cookiesPerHour property
+
+// populate cookiesPerHour for firstAndPike
 firstAndPike.cookiesPerHour = cookiesHour();
 
 function cookiesHour() {
@@ -67,6 +79,14 @@ function cookiesHour() {
   }
   return cookiesArray;
 }
+
+firstAndPike.render();
+
+// seaTacAirport.render();
+// seattleCenter.render();
+// capitolHill.render();
+// alki.render();
+
 
 // dailyCookies: totalLocationCookies()
 
