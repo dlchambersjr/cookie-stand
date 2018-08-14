@@ -223,8 +223,5 @@ console.log(totalAll);
 
 var totalUlel = document.getElementById('allLocations');
 var totalLiel = document.createElement('li');
-
-console.log(totalUlel, totalLiel)
-
 totalLiel.textContent = 'Total Cookies (all Locations): ' + totalAll;
 totalUlel.appendChild(totalLiel);
