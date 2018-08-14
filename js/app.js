@@ -19,9 +19,6 @@ function openHours() {
   }
 }
 
-
-
-
 // Create object for each location
 
 // Each object will include
@@ -37,21 +34,37 @@ var firstAndPike = {
   name: '1st and Pike',
   minCustomers: 23,
   maxCustomers: 65,
-  customersPerHour:
-    function () {
-      console.log(this.minCustomers,this.maxCustomers);
-      this.minCustomers = Math.ceil(this.minCustomers);
-      this.maxCustomers = Math.floor(this.maxCustomers);
-      return Math.floor(Math.random() * (this.maxCustomers - this.minCustomers + 1)) + this.minCustomers;
-    },
-  avgCookiesPerCustomer: 6.3,
-  // cookiesPerHour: [],
-  // dailyCookies: totalLocationCookies()
-};
+  customersPerHour: getRandom(this.minCustomers,this.maxCustomers),
+  avgCookiesPerCustomer: 6.3
+  // cookiesPerHour:
+}
 
 // firstAndPike.customersPerHour = randomCustomers(this.minCustomers,this.maxCustomers);
+funtion getRandom(min,max) {
+    var avgArray = [] ;
+    for (var a = 0; a < hoursArray.length; a++) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      avgArray[a] = (Math.floor(Math.random() * (max - min + 1)) + min);
+      console.log(a, avgArray[a]);
+    }
+    console.log (avgArray);
+    return avgArray;
+}
 
 
+// cookiesPerHour: 
+  //   function () {
+  //     var = [];
+  //     for (var c = 0; c < hoursArray.length; c++) {
+  //       console.log(c, this.avgCookiesPerCustomer, this.customersPerHour[c]);
+        
+        
+  //       cookiesArray[c] = this.avgCookiesPerCustomer * this.customersPerHour[c];
+  //     }
+  //     return cookiesArray;
+  //   },
+  // dailyCookies: totalLocationCookies()
 
 
 //method to create a random number of customers between min/max customers
