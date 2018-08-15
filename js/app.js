@@ -3,11 +3,8 @@
 // Global variables
 var allLoc = [], hoursOpen = [], dailyTot = [];
 var start = 6, finish = 20, grandTotal = 0;
-
-var salesTable = document.getElementById('salesData'); //identify the table to put data in.
+var salesTable = document.getElementById('salesData');
 var addForm = document.getElementById('newStoreForm');
-
-//Hours of operation in 24hr format
 
 // Constructor function called "Build" to create individual locations
 function Build(name, minCust, maxCust, avgCookies) {
@@ -28,10 +25,9 @@ new Build('Seattel Center', 11, 38, 3.7);
 new Build('Capitol Hill', 20, 38, 2.3);
 new Build ('Alki', 2, 16, 4.6);
 
-// Fill in the additional required information
-function fillInfo(open,closed) {
+//Fill Hours Array - 24hr clock to determine am/pm
+function buildHours(open, closed) {
   for (var h = 0; h <= closed - open - 1; h++) {
-    //Fill Hours Array - 24hr clock to determine am/pm
     if (h + open < 12) {
       hoursOpen.push(h + open + 'am');
     } else if (h + open === 12) {
@@ -39,35 +35,40 @@ function fillInfo(open,closed) {
     } else {
       hoursOpen.push((h + open - 12) + 'pm');
     }
-    // Populate Customers, cookies, and totals per hour for each location
+  }
+}
+
+console.log(hoursOpen);
+
+// Populate Customers, cookies, and totals per hour data into the location
+function fillInfo(c) {
+  for (var h = 0; h < hoursOpen.length; h++) {
     dailyTot[h] = 0; // establish begining cookies for each hour
 
-    for (var p = 0; p < allLoc.length; p++) {
-      // Customers per hour
-      var min = Math.ceil(allLoc[p].minCust);
-      var max = Math.floor(allLoc[p].maxCust);
-      allLoc[p].CustPerHr.push(Math.floor(Math.random() * (max - min + 1)) + min);
+    // Customers per hour
+    var min = Math.ceil(allLoc[c].minCust);
+    var max = Math.floor(allLoc[c].maxCust);
+    allLoc[c].CustPerHr.push(Math.floor(Math.random() * (max - min + 1)) + min);
 
-      // Cookies Sold per hour
-      allLoc[p].cookiesPerHr.push(Math.ceil(allLoc[p].CustPerHr[h] * allLoc[p].avgCookies));
+    // Cookies Sold per hour
+    allLoc[c].cookiesPerHr.push(Math.ceil(allLoc[c].CustPerHr[h] * allLoc[c].avgCookies));
 
-      // Hourly all locations
-      allLoc[p].totCookies += allLoc[p].cookiesPerHr[h]; //Daily per location
+    // Hourly all locations
+    allLoc[c].totCookies += allLoc[c].cookiesPerHr[h]; //Daily per location
 
-      // Total daily location total
-      dailyTot[h] += allLoc[p].cookiesPerHr[h];
+    // Total daily location total
+    dailyTot[h] += allLoc[c].cookiesPerHr[h];
 
-      //grand total all locations will go here
-      grandTotal += allLoc[p].cookiesPerHr[h];
-    }
+    //grand total all locations will go here
+    grandTotal += allLoc[c].cookiesPerHr[h];
   }
 }
 
 // create render routine to populate the table with location data
-
 Build.prototype.render = function(a){
 
   var trEl, tdEl, thEl;
+
   // Attache the location Name
   trEl = document.createElement('tr'); //create the row
   thEl = document.createElement('th'); //create the first column with name
@@ -131,16 +132,22 @@ function createFooter() {
 
 function renderAll() {
   for (var r = 0; r < allLoc.length; r++) {
-
-    console.log(r);
     allLoc[r].render(r);
   }
 }
 
-fillInfo(start, finish); //should only run on the first load.
+// pre-loads the calculated info into the locations
+function initalBuild(){
+  buildHours (start,finish);
+  for (var f = 0; f < allLoc.length; f++) {
+    console.log(f);
+    fillInfo(f);
+  }
+}
+
+initalBuild();
 
 //++++++++ this is the process to build the table.  wrap this in a function
-
 createHeader();
 renderAll();
 createFooter();
@@ -159,21 +166,26 @@ createFooter();
 //   }
 // });
 
-function handleFormSubmit(event) {
-  console.log(event.target.newName.value);
-  console.log(event.target.newMin.value);
-  console.log(event.target.newMax.value);
-  console.log(event.target.newAvg.value);
+// Submit Button Event Listner Process
+addForm.addEventListener('submit',handleFormSubmit);
 
-  event.preventDefault();
+function handleFormSubmit(event) {
+  // console.log(event.target.newName.value);
+  // console.log(event.target.newMin.value);
+  // console.log(event.target.newMax.value);
+  // console.log(event.target.newAvg.value);
+
+  event.preventDefault(); //prevent reload
 
   var newName = event.target.newName.value;
-  var newMin = event.target.newMin.value;
-  var newMax = event.target.newMax.value;
-  var newAvg = event.target.newAvg.value;
+  var newMin = parseInt(event.target.newMin.value);
+  var newMax = parseInt(event.target.newMax.value);
+  var newAvg = parseInt(event.target.newAvg.value);
 
   new Build(newName,newMin, newMax,newAvg);
-}
 
-// Event Listeners
-addForm.addEventListener('submit',handleFormSubmit);
+  var last = allLoc.length-1;
+
+  fillInfo(last);
+
+}
