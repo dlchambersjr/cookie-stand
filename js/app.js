@@ -1,10 +1,15 @@
 'use strict';
 
-// Global use variables
-var allLoc = [], hoursOpen = [], dailyTot = []; //Arrays used globally
-var start = 6, finish = 20, grandTotal = 0; //Hours of operation in 24hr format
+// Global variables
+var allLoc = [], hoursOpen = [], dailyTot = [];
+var start = 6, finish = 20, grandTotal = 0;
 
-// Constructor fucntion called "Build" to create individual locations
+var salesTable = document.getElementById('salesData'); //identify the table to put data in.
+var addForm = document.getElementById('newStoreForm');
+
+//Hours of operation in 24hr format
+
+// Constructor function called "Build" to create individual locations
 function Build(name, minCust, maxCust, avgCookies) {
   this.name = name;
   this.minCust = minCust;
@@ -59,7 +64,6 @@ function fillInfo(open,closed) {
 }
 
 // create render routine to populate the table with location data
-var salesTable = document.getElementById('salesData'); //identify the table to put data in.
 
 Build.prototype.render = function(a){
 
@@ -88,7 +92,7 @@ function createHeader() {
   var trEl, tdEl, thEl;
   trEl = document.createElement('tr'); //create the row
   thEl = document.createElement('th'); //create the first column cell
-  thEl.textContent = ''; //leave it blank
+  thEl.textContent = 'Location';
   trEl.appendChild(thEl);
 
   for (var t = 0; t < hoursOpen.length; t++){
@@ -133,7 +137,43 @@ function renderAll() {
   }
 }
 
-fillInfo(start, finish);
+fillInfo(start, finish); //should only run on the first load.
+
+//++++++++ this is the process to build the table.  wrap this in a function
+
 createHeader();
 renderAll();
 createFooter();
+
+// +++++++++++++++++++++++++++
+// Form work
+
+// +++++custom validation message
+// var email = document.getElementById("mail");
+
+// email.addEventListener("input", function (event) {
+//   if (email.validity.typeMismatch) {
+//     email.setCustomValidity("I expect an e-mail, darling!");
+//   } else {
+//     email.setCustomValidity("");
+//   }
+// });
+
+function handleFormSubmit(event) {
+  console.log(event.target.newName.value);
+  console.log(event.target.newMin.value);
+  console.log(event.target.newMax.value);
+  console.log(event.target.newAvg.value);
+
+  event.preventDefault();
+
+  var newName = event.target.newName.value;
+  var newMin = event.target.newMin.value;
+  var newMax = event.target.newMax.value;
+  var newAvg = event.target.newAvg.value;
+
+  new Build(newName,newMin, newMax,newAvg);
+}
+
+// Event Listeners
+addForm.addEventListener('submit',handleFormSubmit);
