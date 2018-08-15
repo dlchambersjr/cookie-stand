@@ -17,11 +17,11 @@ function Build(name, minCust, maxCust, avgCookies) {
 }
 
 // Construct each location with known details
-var FirstAndPike = new Build('First and Pike', 23, 65, 6.3);
-var seaTacAirport = new Build('SeaTac Airport', 3, 24, 1.2);
-var seattleCenter = new Build('Seattel Center', 11, 38, 3.7);
-var capitolHill = new Build('Capitol Hill', 20, 38, 2.3);
-var alki = new Build ('Alki', 2, 16, 4.6);
+new Build('First and Pike', 23, 65, 6.3);
+new Build('SeaTac Airport', 3, 24, 1.2);
+new Build('Seattel Center', 11, 38, 3.7);
+new Build('Capitol Hill', 20, 38, 2.3);
+new Build ('Alki', 2, 16, 4.6);
 
 // Fill in the additional required information
 function fillInfo(open,closed) {
@@ -36,7 +36,7 @@ function fillInfo(open,closed) {
     }
     // Populate Customers, cookies, and totals per hour for each location
     dailyTot[h] = 0; // establish begining cookies for each hour
-    
+
     for (var p = 0; p < allLoc.length; p++) {
       // Customers per hour
       var min = Math.ceil(allLoc[p].minCust);
@@ -45,18 +45,16 @@ function fillInfo(open,closed) {
 
       // Cookies Sold per hour
       allLoc[p].cookiesPerHr.push(Math.ceil(allLoc[p].CustPerHr[h] * allLoc[p].avgCookies));
-      
+
       // Hourly all locations
       allLoc[p].totCookies += allLoc[p].cookiesPerHr[h]; //Daily per location
 
       // Total daily location total
       dailyTot[h] += allLoc[p].cookiesPerHr[h];
-      
+
       //grand total all locations will go here
       grandTotal += allLoc[p].cookiesPerHr[h];
       console.log(grandTotal);
-
-
     }
   }
 }
@@ -100,10 +98,10 @@ function createHeader() {
     tdEl.textContent = hoursOpen[t];
     trEl.appendChild(tdEl);
   }
-    //Attach daily total to header
-    tdEl = document.createElement('td');
-    tdEl.textContent = 'Daily Total';
-    trEl.appendChild(tdEl);
+  //Attach daily total to header
+  tdEl = document.createElement('td');
+  tdEl.textContent = 'Daily Total';
+  trEl.appendChild(tdEl);
 
   salesTable.appendChild(trEl);
 }
@@ -120,17 +118,17 @@ function createFooter() {
     tdEl.textContent = dailyTot[t];
     trEl.appendChild(tdEl);
   }
-    //Attach grand total to footer
-    tdEl = document.createElement('td');
-    tdEl.textContent = grandTotal;
-    trEl.appendChild(tdEl);
+  //Attach grand total to footer
+  tdEl = document.createElement('td');
+  tdEl.textContent = grandTotal;
+  trEl.appendChild(tdEl);
 
   salesTable.appendChild(trEl);
 }
 
 function renderAll() {
   for (var r = 0; r < allLoc.length; r++) {
-    
+
     console.log(r);
     allLoc[r].render(r);
   }
