@@ -131,26 +131,25 @@ function createFooter() {
 }
 
 function renderAll() {
+  salesTable.innerHTML = '';
   for (var r = 0; r < allLoc.length; r++) {
     allLoc[r].render(r);
   }
 }
 
-// pre-loads the calculated info into the locations
+// pre-loads the calculated info into the locations and renders the inital table
 function initalBuild(){
   buildHours (start,finish);
   for (var f = 0; f < allLoc.length; f++) {
     console.log(f);
     fillInfo(f);
   }
+  createHeader();
+  renderAll();
+  createFooter();
 }
 
 initalBuild();
-
-//++++++++ this is the process to build the table.  wrap this in a function
-createHeader();
-renderAll();
-createFooter();
 
 // +++++++++++++++++++++++++++
 // Form work
@@ -188,4 +187,18 @@ function handleFormSubmit(event) {
 
   fillInfo(last);
 
+  renderAll();
+  createFooter();
+
+  // Clear form values for next entry
+  event.target.newName.value = null;
+  event.target.newMin.value = null;
+  event.target.newMax.value = null;
+  event.target.newAvg.value = null;
 }
+
+
+
+
+
+
