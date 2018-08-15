@@ -24,7 +24,6 @@ var capitolHill = new Build('Capitol Hill', 20, 38, 2.3);
 var alki = new Build ('Alki', 2, 16, 4.6);
 
 // Fill in the additional required information
-
 function fillInfo(open,closed) {
   for (var h = 0; h <= closed - open - 1; h++) {
     //Fill Hours Array - 24hr clock to determine am/pm
@@ -46,40 +45,37 @@ function fillInfo(open,closed) {
       allLoc[p].cookiesPerHr.push(Math.ceil(allLoc[p].CustPerHr[h] * allLoc[p].avgCookies));
 
       // Hourly, Daily and Grand Totals
-      // allCookiesHr[h] = allCookiesHr[h] + allLoc[p].cookiesPerHr[h]; //Hourly all locations
+      //Hourly all locations will go here
       allLoc[p].totCookies += allLoc[p].cookiesPerHr[h]; //Daily per location
-      // grandTotCookies = grandTotCookies + allLoc[p].totCookies; //grand total all location
-      // console.log(grandTotCookies);
+      //grand total all locations will go here
+      
     }
   }
 }
 
 // create render routine to populate the table with location data
-var salesTable = document.getElementById('salesDate');//identify the table to put data in.
+var salesTable = document.getElementById('salesData'); //identify the table to put data in.
 
-Build.prototype.render = function(){
-
-  //number of rows is based on number of locations
+Build.prototype.render = function(a){
   var trEl, tdEl, thEl;
-  for (var l = 0; d < allLoc.length; d++){
-    trEl = document.createElement('tr'); //create the row
-    thEl = document.createElement('th'); //create the first column with name
-    thEl = document.textContent(allLoc[l].name);
-    trEl = document.appendChild(thEl);
+  trEl = document.createElement('tr'); //create the row
+  thEl = document.createElement('th'); //create the first column with name
+  thEl.textContent = this.name;
+  trEl.appendChild(thEl);
 
-    for (var d = 0; d < allLoc[l].cookiesPerHr.length; l++){
-      tdEl = document.createElement('th'); //create the first column with name
-      tdEl = document.textContent(allLoc[l].name);
-      trEl = document.appendChild(tdEl);
-    }
-    salesTable.document.appendChild(trEl);
+  for (var d = 0; d < allLoc[a].cookiesPerHr.length; d++){
+    tdEl = document.createElement('th'); //create a cell for each column of time
+    tdEl.textContent = this.cookiesPerHr[d];
+    trEl.appendChild(tdEl);
   }
-
+  salesTable.appendChild(trEl);
 };
 
+function renderAll() {
+  for (var r = 0; r < allLoc.length; r++) {
+    allLoc[r].render(r);
+  }
+}
 
 fillInfo(start, finish);
-
-for (var r = 0; r < allLoc.length; r++) {
-  allLoc[r].render();
-}
+renderAll();
