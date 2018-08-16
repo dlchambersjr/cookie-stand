@@ -1,10 +1,9 @@
 'use strict';
 
 // Global variables
-var allLoc = [], hoursOpen = [], dailyTot = [];
-var start = 6, finish = 20, grandTotal = 0;
-var salesTable = document.getElementById('salesData');
-var addForm = document.getElementById('newStoreForm');
+var allLoc = [], hoursOpen = [], hourTot = [];
+var start = 6, finish = 20, hourlyLocTot = 0, grandTotal = 0;
+
 
 // Constructor function called "Build" to create individual locations
 function Build(name, minCust, maxCust, avgCookies) {
@@ -38,45 +37,75 @@ function buildHours(open, closed) {
   }
 }
 
-console.log(hoursOpen);
-
 // Populate Customers, cookies, and totals per hour data into the location
-function fillInfo(c) {
+function fillInfo(f) {
   for (var h = 0; h < hoursOpen.length; h++) {
-    dailyTot[h] = 0; // establish begining cookies for each hour
+    hourTot[h] = 0; // establish begining cookies for each hour
 
     // Customers per hour
-    var min = Math.ceil(allLoc[c].minCust);
-    var max = Math.floor(allLoc[c].maxCust);
-    allLoc[c].CustPerHr.push(Math.floor(Math.random() * (max - min + 1)) + min);
+    var min = Math.ceil(allLoc[f].minCust);
+    var max = Math.floor(allLoc[f].maxCust);
+    allLoc[f].CustPerHr.push(Math.floor(Math.random() * (max - min + 1)) + min);
 
     // Cookies Sold per hour
-    allLoc[c].cookiesPerHr.push(Math.ceil(allLoc[c].CustPerHr[h] * allLoc[c].avgCookies));
+    allLoc[f].cookiesPerHr.push(Math.ceil(allLoc[f].CustPerHr[h] * allLoc[f].avgCookies));
 
     // Hourly all locations
-    allLoc[c].totCookies += allLoc[c].cookiesPerHr[h]; //Daily per location
+    allLoc[f].totCookies += allLoc[f].cookiesPerHr[h]; //Daily per location
 
-    // Total daily location total
-    dailyTot[h] += allLoc[c].cookiesPerHr[h];
-
-    //grand total all locations will go here
-    grandTotal += allLoc[c].cookiesPerHr[h];
+  }
+}
+function getTotals() {
+  grandTotal = 0;
+  for (var h = 0; h < hoursOpen.length; h++) {
+    hourTot[h] = 0;
+    hourlyLocTot = 0;
+    for (var f = 0; f < allLoc.length; f++) {
+      hourlyLocTot += allLoc[f].cookiesPerHr[h]; // Total hourly
+      grandTotal += allLoc[f].cookiesPerHr[h]; //grand total all locations
+    }
+    hourTot[h] += hourlyLocTot; //add to the array for the footer
   }
 }
 
-// create render routine to populate the table with location data
-Build.prototype.render = function(a){
+// Declare variables for rendering the table
+var salesTable = document.getElementById('salesData');
+var addForm = document.getElementById('newStoreForm');
 
-  var trEl, tdEl, thEl;
-
-  // Attache the location Name
-  trEl = document.createElement('tr'); //create the row
-  thEl = document.createElement('th'); //create the first column with name
-  thEl.textContent = this.name;
+// Render the Header
+function createHeader() {  
+  // Create the first header column
+  var trEl = document.createElement('tr'); //create the row
+  var thEl = document.createElement('th'); //create the first column cell
+  thEl.textContent = 'Location';
   trEl.appendChild(thEl);
 
+  for (var t = 0; t < hoursOpen.length; t++){
+    var tdEl = document.createElement('th'); //create a cell for each column of time
+    tdEl.textContent = hoursOpen[t];
+    trEl.appendChild(tdEl);
+  }
+
+  // Attach last header column
+  tdEl = document.createElement('td');
+  tdEl.textContent = 'Daily Total';
+  trEl.appendChild(tdEl);
+
+  salesTable.appendChild(trEl);
+}
+
+// Render the main data of the table
+Build.prototype.render = function(a){
+
+  // Attach the location Name
+  var trEl = document.createElement('tr'); //create the row
+  var thEl = document.createElement('th'); //create the first column
+  thEl.textContent = this.name;
+  trEl.appendChild(thEl);
+  console.log(trEl);
+
   for (var d = 0; d < allLoc[a].cookiesPerHr.length; d++){
-    tdEl = document.createElement('td'); //create a cell for each column of time
+    var tdEl = document.createElement('td'); //create a cell for each column of time
     tdEl.textContent = this.cookiesPerHr[d];
     trEl.appendChild(tdEl);
   }
@@ -89,37 +118,16 @@ Build.prototype.render = function(a){
   salesTable.appendChild(trEl);
 };
 
-function createHeader() {
-  var trEl, tdEl, thEl;
-  trEl = document.createElement('tr'); //create the row
-  thEl = document.createElement('th'); //create the first column cell
-  thEl.textContent = 'Location';
-  trEl.appendChild(thEl);
-
-  for (var t = 0; t < hoursOpen.length; t++){
-    tdEl = document.createElement('th'); //create a cell for each column of time
-    tdEl.textContent = hoursOpen[t];
-    trEl.appendChild(tdEl);
-  }
-
-  //Attach daily total to header
-  tdEl = document.createElement('td');
-  tdEl.textContent = 'Daily Total';
-  trEl.appendChild(tdEl);
-
-  salesTable.appendChild(trEl);
-}
-
 function createFooter() {
-  var trEl, tdEl, thEl;
-  trEl = document.createElement('tr'); //create the row
-  thEl = document.createElement('th'); //create the first column cell
+  var trEl = document.createElement('tr'); //create the row
+  var thEl = document.createElement('th'); //create the first column cell
   thEl.textContent = 'TOTAL';
   trEl.appendChild(thEl);
+  console.log(trEl);
 
   for (var t = 0; t < hoursOpen.length; t++){
-    tdEl = document.createElement('th'); //create a cell for each column of time
-    tdEl.textContent = dailyTot[t];
+    var tdEl = document.createElement('th'); //create a cell for each column of time
+    tdEl.textContent = hourTot[t];
     trEl.appendChild(tdEl);
   }
   //Attach grand total to footer
@@ -131,7 +139,6 @@ function createFooter() {
 }
 
 function renderAll() {
-  salesTable.innerHTML = '';
   for (var r = 0; r < allLoc.length; r++) {
     allLoc[r].render(r);
   }
@@ -141,9 +148,9 @@ function renderAll() {
 function initalBuild(){
   buildHours (start,finish);
   for (var f = 0; f < allLoc.length; f++) {
-    console.log(f);
     fillInfo(f);
   }
+  getTotals();
   createHeader();
   renderAll();
   createFooter();
@@ -169,11 +176,6 @@ initalBuild();
 addForm.addEventListener('submit',handleFormSubmit);
 
 function handleFormSubmit(event) {
-  // console.log(event.target.newName.value);
-  // console.log(event.target.newMin.value);
-  // console.log(event.target.newMax.value);
-  // console.log(event.target.newAvg.value);
-
   event.preventDefault(); //prevent reload
 
   var newName = event.target.newName.value;
@@ -186,8 +188,11 @@ function handleFormSubmit(event) {
   var last = allLoc.length-1;
 
   fillInfo(last);
+  
+  salesTable.innerHTML = ''; //clear previous tables before rendering
 
   renderAll();
+  getTotals();
   createFooter();
 
   // Clear form values for next entry
