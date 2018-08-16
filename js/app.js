@@ -158,7 +158,8 @@ function initalBuild(){
 
 initalBuild();
 
-// Submit Button Event Listner Process
+// Form Event Listeners
+// Submit Button
 addForm.addEventListener('submit',handleFormSubmit);
 
 function handleFormSubmit(event) {
@@ -167,7 +168,7 @@ function handleFormSubmit(event) {
   var newName = event.target.newName.value;
   var newMin = parseInt(event.target.newMin.value);
   var newMax = parseInt(event.target.newMax.value);
-  var newAvg = parseInt(event.target.newAvg.value);
+  var newAvg = parseFloat(event.target.newAvg.value);
 
   new Build(newName,newMin, newMax, newAvg);
 
