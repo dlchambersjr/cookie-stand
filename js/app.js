@@ -1,10 +1,11 @@
 'use strict';
 
-// Global use variables
-var allLoc = [], hoursOpen = [], dailyTot = []; //Arrays used globally
-var start = 6, finish = 20, grandTotal = 0; //Hours of operation in 24hr format
+// Global variables
+var allLoc = [], hoursOpen = [], hourTot = [];
+var start = 6, finish = 20, hourlyLocTot = 0, grandTotal = 0;
 
-// Constructor fucntion called "Build" to create individual locations
+
+// Constructor function called "Build" to create individual locations
 function Build(name, minCust, maxCust, avgCookies) {
   this.name = name;
   this.minCust = minCust;
@@ -23,10 +24,9 @@ new Build('Seattel Center', 11, 38, 3.7);
 new Build('Capitol Hill', 20, 38, 2.3);
 new Build ('Alki', 2, 16, 4.6);
 
-// Fill in the additional required information
-function fillInfo(open,closed) {
+//Fill Hours Array - 24hr clock to determine am/pm
+function buildHours(open, closed) {
   for (var h = 0; h <= closed - open - 1; h++) {
-    //Fill Hours Array - 24hr clock to determine am/pm
     if (h + open < 12) {
       hoursOpen.push(h + open + 'am');
     } else if (h + open === 12) {
@@ -34,46 +34,78 @@ function fillInfo(open,closed) {
     } else {
       hoursOpen.push((h + open - 12) + 'pm');
     }
-    // Populate Customers, cookies, and totals per hour for each location
-    dailyTot[h] = 0; // establish begining cookies for each hour
-
-    for (var p = 0; p < allLoc.length; p++) {
-      // Customers per hour
-      var min = Math.ceil(allLoc[p].minCust);
-      var max = Math.floor(allLoc[p].maxCust);
-      allLoc[p].CustPerHr.push(Math.floor(Math.random() * (max - min + 1)) + min);
-
-      // Cookies Sold per hour
-      allLoc[p].cookiesPerHr.push(Math.ceil(allLoc[p].CustPerHr[h] * allLoc[p].avgCookies));
-
-      // Hourly all locations
-      allLoc[p].totCookies += allLoc[p].cookiesPerHr[h]; //Daily per location
-
-      // Total daily location total
-      dailyTot[h] += allLoc[p].cookiesPerHr[h];
-
-      //grand total all locations will go here
-      grandTotal += allLoc[p].cookiesPerHr[h];
-      console.log(grandTotal);
-    }
   }
 }
 
-// create render routine to populate the table with location data
-var salesTable = document.getElementById('salesData'); //identify the table to put data in.
+// Populate Customers, cookies, and totals per hour data into the location
+function fillInfo(f) {
+  for (var h = 0; h < hoursOpen.length; h++) {
+    hourTot[h] = 0; // establish begining cookies for each hour
 
-Build.prototype.render = function(a){
+    // Customers per hour
+    var min = Math.ceil(allLoc[f].minCust);
+    var max = Math.floor(allLoc[f].maxCust);
+    allLoc[f].CustPerHr.push(Math.floor(Math.random() * (max - min + 1)) + min);
 
-  console.log(a);
-  var trEl, tdEl, thEl;
-  // Attache the location Name
-  trEl = document.createElement('tr'); //create the row
-  thEl = document.createElement('th'); //create the first column with name
-  thEl.textContent = this.name;
+    // Cookies Sold per hour
+    allLoc[f].cookiesPerHr.push(Math.ceil(allLoc[f].CustPerHr[h] * allLoc[f].avgCookies));
+
+    // Hourly all locations
+    allLoc[f].totCookies += allLoc[f].cookiesPerHr[h]; //Daily per location
+
+  }
+}
+function getTotals() {
+  grandTotal = 0;
+  for (var h = 0; h < hoursOpen.length; h++) {
+    hourTot[h] = 0;
+    hourlyLocTot = 0;
+    for (var f = 0; f < allLoc.length; f++) {
+      hourlyLocTot += allLoc[f].cookiesPerHr[h]; // Total hourly
+      grandTotal += allLoc[f].cookiesPerHr[h]; //grand total all locations
+    }
+    hourTot[h] += hourlyLocTot; //add to the array for the footer
+  }
+}
+
+// Declare variables for rendering the table
+var salesTable = document.getElementById('salesData');
+var addForm = document.getElementById('newStoreForm');
+
+// Render the Header
+function createHeader() {
+  // Create the first header column
+  var trEl = document.createElement('tr'); //create the row
+  var thEl = document.createElement('th'); //create the first column cell
+  thEl.textContent = 'Location';
   trEl.appendChild(thEl);
 
+  for (var t = 0; t < hoursOpen.length; t++){
+    var tdEl = document.createElement('th'); //create a cell for each column of time
+    tdEl.textContent = hoursOpen[t];
+    trEl.appendChild(tdEl);
+  }
+
+  // Attach last header column
+  tdEl = document.createElement('td');
+  tdEl.textContent = 'Daily Total';
+  trEl.appendChild(tdEl);
+
+  salesTable.appendChild(trEl);
+}
+
+// Render the main data of the table
+Build.prototype.render = function(a){
+
+  // Attach the location Name
+  var trEl = document.createElement('tr'); //create the row
+  var thEl = document.createElement('th'); //create the first column
+  thEl.textContent = this.name;
+  trEl.appendChild(thEl);
+  console.log(trEl);
+
   for (var d = 0; d < allLoc[a].cookiesPerHr.length; d++){
-    tdEl = document.createElement('td'); //create a cell for each column of time
+    var tdEl = document.createElement('td'); //create a cell for each column of time
     tdEl.textContent = this.cookiesPerHr[d];
     trEl.appendChild(tdEl);
   }
@@ -86,36 +118,16 @@ Build.prototype.render = function(a){
   salesTable.appendChild(trEl);
 };
 
-function createHeader() {
-  var trEl, tdEl, thEl;
-  trEl = document.createElement('tr'); //create the row
-  thEl = document.createElement('th'); //create the first column cell
-  thEl.textContent = ''; //leave it blank
-  trEl.appendChild(thEl);
-
-  for (var t = 0; t < hoursOpen.length; t++){
-    tdEl = document.createElement('th'); //create a cell for each column of time
-    tdEl.textContent = hoursOpen[t];
-    trEl.appendChild(tdEl);
-  }
-  //Attach daily total to header
-  tdEl = document.createElement('td');
-  tdEl.textContent = 'Daily Total';
-  trEl.appendChild(tdEl);
-
-  salesTable.appendChild(trEl);
-}
-
 function createFooter() {
-  var trEl, tdEl, thEl;
-  trEl = document.createElement('tr'); //create the row
-  thEl = document.createElement('th'); //create the first column cell
+  var trEl = document.createElement('tr'); //create the row
+  var thEl = document.createElement('th'); //create the first column cell
   thEl.textContent = 'TOTAL';
   trEl.appendChild(thEl);
+  console.log(trEl);
 
   for (var t = 0; t < hoursOpen.length; t++){
-    tdEl = document.createElement('th'); //create a cell for each column of time
-    tdEl.textContent = dailyTot[t];
+    var tdEl = document.createElement('th'); //create a cell for each column of time
+    tdEl.textContent = hourTot[t];
     trEl.appendChild(tdEl);
   }
   //Attach grand total to footer
@@ -128,13 +140,50 @@ function createFooter() {
 
 function renderAll() {
   for (var r = 0; r < allLoc.length; r++) {
-
-    console.log(r);
     allLoc[r].render(r);
   }
 }
 
-fillInfo(start, finish);
-createHeader();
-renderAll();
-createFooter();
+// pre-loads the calculated info into the locations and renders the inital table
+function initalBuild(){
+  buildHours (start,finish);
+  for (var f = 0; f < allLoc.length; f++) {
+    fillInfo(f);
+  }
+  getTotals();
+  createHeader();
+  renderAll();
+  createFooter();
+}
+
+initalBuild();
+
+// Submit Button Event Listner Process
+addForm.addEventListener('submit',handleFormSubmit);
+
+function handleFormSubmit(event) {
+  event.preventDefault(); //prevent reload
+
+  var newName = event.target.newName.value;
+  var newMin = parseInt(event.target.newMin.value);
+  var newMax = parseInt(event.target.newMax.value);
+  var newAvg = parseInt(event.target.newAvg.value);
+
+  new Build(newName,newMin, newMax, newAvg);
+
+  var last = allLoc.length-1;
+
+  fillInfo(last);
+
+  salesTable.innerHTML = ''; //clear previous tables before rendering
+  createHeader();
+  renderAll();
+  getTotals();
+  createFooter();
+
+  // Clear form values for next entry
+  event.target.newName.value = null;
+  event.target.newMin.value = null;
+  event.target.newMax.value = null;
+  event.target.newAvg.value = null;
+}
