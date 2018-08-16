@@ -1,3 +1,14 @@
+html {
+  width: 980px;
+}
+
+body {
+  
+  background-image: url("img/salmon.png") repeat;
+
+}
+
+
 table {
   border: 1px solid black;
   text-align: center;
