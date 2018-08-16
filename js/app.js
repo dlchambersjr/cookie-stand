@@ -73,7 +73,7 @@ var salesTable = document.getElementById('salesData');
 var addForm = document.getElementById('newStoreForm');
 
 // Render the Header
-function createHeader() {  
+function createHeader() {
   // Create the first header column
   var trEl = document.createElement('tr'); //create the row
   var thEl = document.createElement('th'); //create the first column cell
@@ -158,20 +158,6 @@ function initalBuild(){
 
 initalBuild();
 
-// +++++++++++++++++++++++++++
-// Form work
-
-// +++++custom validation message
-// var email = document.getElementById("mail");
-
-// email.addEventListener("input", function (event) {
-//   if (email.validity.typeMismatch) {
-//     email.setCustomValidity("I expect an e-mail, darling!");
-//   } else {
-//     email.setCustomValidity("");
-//   }
-// });
-
 // Submit Button Event Listner Process
 addForm.addEventListener('submit',handleFormSubmit);
 
@@ -183,14 +169,14 @@ function handleFormSubmit(event) {
   var newMax = parseInt(event.target.newMax.value);
   var newAvg = parseInt(event.target.newAvg.value);
 
-  new Build(newName,newMin, newMax,newAvg);
+  new Build(newName,newMin, newMax, newAvg);
 
   var last = allLoc.length-1;
 
   fillInfo(last);
-  
-  salesTable.innerHTML = ''; //clear previous tables before rendering
 
+  salesTable.innerHTML = ''; //clear previous tables before rendering
+  createHeader();
   renderAll();
   getTotals();
   createFooter();
@@ -201,9 +187,3 @@ function handleFormSubmit(event) {
   event.target.newMax.value = null;
   event.target.newAvg.value = null;
 }
-
-
-
-
-
-
