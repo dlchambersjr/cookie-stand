@@ -151,8 +151,15 @@ form {
   border: 1px solid black;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   margin: 25px;
+  border: 5px solid #aa4c2d;
+  border-radius: 10px;
+  background-color: #c8ba92;
 }
 
+#form-data-entry {
+  display: grid;
+  Float: left;
+}
 
 table {
   border: 1px solid black;
@@ -160,9 +167,8 @@ table {
   color: #49431d;
   text-align: center;
   margin: auto;
-
-  
 }
+
 th {
   border: 1px solid black;
   background-color:#c4a472;
