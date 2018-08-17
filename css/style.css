@@ -4,15 +4,15 @@
 html {
   width: 980px;
   margin: auto;
-  background-color:#2c2705;
+  background-color: rgba(228, 211, 197, 0.37);
+  /* background-image: url("/img/chinook-small.png"); */
 }
 
 body {
   width: 960px;
   margin: 0 auto;
-  border: 1px dashed black;
   font-family: Georgia, 'Times New Roman', Times, serif;
-  
+  /* color:white; */
 
 }
 header { 
@@ -33,26 +33,25 @@ header {
   transform: rotate(-15deg);
 }
 
-#header-background {
-  background-color
-}
-
 header h1 {
   width: 600px;
+  margin-bottom: 25px;
   float:right;
   font-size: 60px;
-  border:
 }
 
 header h2 {
+  width: 600px;
+  margin: 25px 0px 0px 0px;
   font-size: 25px;
-  float:right;
+  float: right;
+  
 }
 
 #hero-tagline {
-  font-size: 25px;;
-  padding-top: 25px;
-
+  width: 600px;
+  font-size: 25px;
+  float:right;
 }
 
 nav {
@@ -68,7 +67,6 @@ nav ul {
 }
 
 Nav li {
-  /* float: left; */
   display: inline-block;
   margin-right: 25px;
   padding: 10px;
@@ -90,16 +88,15 @@ background-color: green;
 } */
 
 section {
-  width: 620px;
-  margin: 10px;
+  width: 600px;
+  margin: 10px 0px;
   border: 1px dotted black;
   padding: 10px;
-  display:inline-block;
   float: left;
 }
 
 aside {
-  width: 310px;
+  width: 290px;
   margin: 10px;
   border: 1px dotted black;
   padding: 10px;
