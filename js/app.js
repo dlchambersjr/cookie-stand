@@ -87,9 +87,9 @@ function createHeader() {
   }
 
   // Attach last header column
-  tdEl = document.createElement('td');
-  tdEl.textContent = 'Daily Total';
-  trEl.appendChild(tdEl);
+  thEl = document.createElement('th');
+  thEl.textContent = 'Daily Total';
+  trEl.appendChild(thEl);
 
   salesTable.appendChild(trEl);
 }
@@ -131,9 +131,9 @@ function createFooter() {
     trEl.appendChild(tdEl);
   }
   //Attach grand total to footer
-  tdEl = document.createElement('td');
-  tdEl.textContent = grandTotal;
-  trEl.appendChild(tdEl);
+  thEl = document.createElement('th');
+  thEl.textContent = grandTotal;
+  trEl.appendChild(thEl);
 
   salesTable.appendChild(trEl);
 }
