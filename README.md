@@ -6,3 +6,7 @@ This is the beginning of trying to create a README.MD file so I can begin to lea
 
 ## This is a list... I think
 - added .PSD to .gitignore so it won't upload my Photoshop files.  
+
+### 2018.08.18
+Renamed all variables to comply with "Clean Code" concepts
+
