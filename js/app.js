@@ -24,8 +24,8 @@ new BuildStore('Seattel Center', 11, 38, 3.7);
 new BuildStore('Capitol Hill', 20, 38, 2.3);
 new BuildStore ('Alki', 2, 16, 4.6);
 
-//Create an array for store hours
-function createStoreHours(open, closed) {
+// Create an array for store hours
+(function(open, closed) {
   for (var time = 0 + open; time <= closed - 1; time++) {
     if (time < 12) {
       storeHours.push(`${time}am`);
@@ -35,7 +35,7 @@ function createStoreHours(open, closed) {
       storeHours.push(`${time - 12}pm`);
     }
   }
-}
+})(openTime,closedTime); // Runs without prompting
 
 // Populate Customers, cookies, and totals per hour data into the location
 function calculateStoreInfo(storeNumber) {
@@ -71,23 +71,24 @@ function getCookieTotals() {
 
 // Declare variables for rendering the table
 var salesTable = document.getElementById('salesData');
-var addForm = document.getElementById('newStoreForm');
+var addNewStoreForm = document.getElementById('addNewStoreForm');
 
-// Render the Header
-function createHeader() {
+// Render the Sales Table Header
+function createSalesTableHeader() {
   // Create the first header column
   var trEl = document.createElement('tr'); //create the row
   var thEl = document.createElement('th'); //create the first column cell
   thEl.textContent = 'Location';
   trEl.appendChild(thEl);
 
+  // Create the header body
   for (var t = 0; t < storeHours.length; t++){
     var tdEl = document.createElement('th'); //create a cell for each column of time
     tdEl.textContent = storeHours[t];
     trEl.appendChild(tdEl);
   }
 
-  // Attach last header column
+  // Create last header column
   thEl = document.createElement('th');
   thEl.textContent = 'Daily Total';
   trEl.appendChild(thEl);
@@ -95,7 +96,7 @@ function createHeader() {
   salesTable.appendChild(trEl);
 }
 
-// Render the main data of the table
+// Render the main data of the projected sales table
 BuildStore.prototype.render = function(a){
 
   // Attach the location Name
@@ -119,7 +120,7 @@ BuildStore.prototype.render = function(a){
   salesTable.appendChild(trEl);
 };
 
-function createFooter() {
+function createSalesTableFooter() {
   var trEl = document.createElement('tr'); //create the row
   var thEl = document.createElement('th'); //create the first column cell
   thEl.textContent = 'TOTAL';
@@ -139,29 +140,38 @@ function createFooter() {
   salesTable.appendChild(trEl);
 }
 
-function renderAll() {
+function createSalesTableBody() {
   for (var storeNumber = 0; storeNumber < allStores.length; storeNumber++) {
     allStores[storeNumber].render(storeNumber);
   }
 }
 
-// pre-loads the calculated info into the locations and renders the inital table
-function initalBuild(){
-  createStoreHours (openTime,closedTime);
-  for (var storeNumber = 0; storeNumber < allStores.length; storeNumber++) {
-    calculateStoreInfo(storeNumber);
-  }
+function createSalesTable() {
+  salesTable.innerHTML = ''; //clear previous tables before rendering
   getCookieTotals();
-  createHeader();
-  renderAll();
-  createFooter();
+  createSalesTableHeader();
+  createSalesTableBody();
+  createSalesTableFooter();
 }
 
-initalBuild();
+// pre-loads the calculated info into the allStores array and renders the inital table
+// otherwise skips the pre-load and appends only the new store
+var newStore = false;
+
+function getMissingStoreData(){
+  if (newStore === false) {
+    for (var storeNumber = 0; storeNumber < allStores.length; storeNumber++) {
+      calculateStoreInfo(storeNumber);
+    }
+    createSalesTable();
+  } else createSalesTable();
+}
+
+getMissingStoreData();
 
 // Form Event Listeners
 // Submit Button
-addForm.addEventListener('submit',handleFormSubmit);
+addNewStoreForm.addEventListener('submit',handleFormSubmit);
 
 function handleFormSubmit(event) {
   event.preventDefault(); //prevent reload
@@ -175,13 +185,10 @@ function handleFormSubmit(event) {
 
   var newStoreNumber = allStores.length-1;
 
-  calculateStoreInfo(newStoreNumber);
+  newStore = true; // tells the builder not to reset the previous store data
 
-  salesTable.innerHTML = ''; //clear previous tables before rendering
-  createHeader();
-  renderAll();
-  getCookieTotals();
-  createFooter();
+  calculateStoreInfo(newStoreNumber);
+  createSalesTable();
 
   // Clear form values for next entry
   event.target.newStoreName.value = null;
