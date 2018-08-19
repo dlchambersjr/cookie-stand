@@ -1,12 +1,12 @@
 'use strict';
 
 // Global variables
-var allLoc = [], hoursOpen = [], hourTot = [];
-var start = 6, finish = 20, hourlyLocTot = 0, grandTotal = 0;
+var storeLocations = [], storeHours = [], hourTot = [];
+var openTime = 6, closedTime = 20, hourlyLocTot = 0, grandTotal = 0; //used 24hr time for easier calculations and am/pm
 
 
-// Constructor function called "Build" to create individual locations
-function Build(name, minCust, maxCust, avgCookies) {
+// Constructor function called "BuildStore" to create individual locations
+function BuildStore(name, minCust, maxCust, avgCookies) {
   this.name = name;
   this.minCust = minCust;
   this.maxCust = maxCust;
@@ -14,55 +14,55 @@ function Build(name, minCust, maxCust, avgCookies) {
   this.CustPerHr = [];
   this.cookiesPerHr = [];
   this.totCookies = 0;
-  allLoc.push(this);
+  storeLocations.push(this);
 }
 
 // Construct each location with known details
-new Build('First and Pike', 23, 65, 6.3);
-new Build('SeaTac Airport', 3, 24, 1.2);
-new Build('Seattel Center', 11, 38, 3.7);
-new Build('Capitol Hill', 20, 38, 2.3);
-new Build ('Alki', 2, 16, 4.6);
+new BuildStore('First and Pike', 23, 65, 6.3);
+new BuildStore('SeaTac Airport', 3, 24, 1.2);
+new BuildStore('Seattel Center', 11, 38, 3.7);
+new BuildStore('Capitol Hill', 20, 38, 2.3);
+new BuildStore ('Alki', 2, 16, 4.6);
 
 //Fill Hours Array - 24hr clock to determine am/pm
-function buildHours(open, closed) {
+function createStoreHours(open, closed) {
   for (var h = 0; h <= closed - open - 1; h++) {
     if (h + open < 12) {
-      hoursOpen.push(h + open + 'am');
+      storeHours.push(h + open + 'am');
     } else if (h + open === 12) {
-      hoursOpen.push(h + open + 'pm');
+      storeHours.push(h + open + 'pm');
     } else {
-      hoursOpen.push((h + open - 12) + 'pm');
+      storeHours.push((h + open - 12) + 'pm');
     }
   }
 }
 
 // Populate Customers, cookies, and totals per hour data into the location
 function fillInfo(f) {
-  for (var h = 0; h < hoursOpen.length; h++) {
+  for (var h = 0; h < storeHours.length; h++) {
     hourTot[h] = 0; // establish begining cookies for each hour
 
     // Customers per hour
-    var min = Math.ceil(allLoc[f].minCust);
-    var max = Math.floor(allLoc[f].maxCust);
-    allLoc[f].CustPerHr.push(Math.floor(Math.random() * (max - min + 1)) + min);
+    var min = Math.ceil(storeLocations[f].minCust);
+    var max = Math.floor(storeLocations[f].maxCust);
+    storeLocations[f].CustPerHr.push(Math.floor(Math.random() * (max - min + 1)) + min);
 
     // Cookies Sold per hour
-    allLoc[f].cookiesPerHr.push(Math.ceil(allLoc[f].CustPerHr[h] * allLoc[f].avgCookies));
+    storeLocations[f].cookiesPerHr.push(Math.ceil(storeLocations[f].CustPerHr[h] * storeLocations[f].avgCookies));
 
     // Hourly all locations
-    allLoc[f].totCookies += allLoc[f].cookiesPerHr[h]; //Daily per location
+    storeLocations[f].totCookies += storeLocations[f].cookiesPerHr[h]; //Daily per location
 
   }
 }
 function getTotals() {
   grandTotal = 0;
-  for (var h = 0; h < hoursOpen.length; h++) {
+  for (var h = 0; h < storeHours.length; h++) {
     hourTot[h] = 0;
     hourlyLocTot = 0;
-    for (var f = 0; f < allLoc.length; f++) {
-      hourlyLocTot += allLoc[f].cookiesPerHr[h]; // Total hourly
-      grandTotal += allLoc[f].cookiesPerHr[h]; //grand total all locations
+    for (var f = 0; f < storeLocations.length; f++) {
+      hourlyLocTot += storeLocations[f].cookiesPerHr[h]; // Total hourly
+      grandTotal += storeLocations[f].cookiesPerHr[h]; //grand total all locations
     }
     hourTot[h] += hourlyLocTot; //add to the array for the footer
   }
@@ -80,9 +80,9 @@ function createHeader() {
   thEl.textContent = 'Location';
   trEl.appendChild(thEl);
 
-  for (var t = 0; t < hoursOpen.length; t++){
+  for (var t = 0; t < storeHours.length; t++){
     var tdEl = document.createElement('th'); //create a cell for each column of time
-    tdEl.textContent = hoursOpen[t];
+    tdEl.textContent = storeHours[t];
     trEl.appendChild(tdEl);
   }
 
@@ -95,7 +95,7 @@ function createHeader() {
 }
 
 // Render the main data of the table
-Build.prototype.render = function(a){
+BuildStore.prototype.render = function(a){
 
   // Attach the location Name
   var trEl = document.createElement('tr'); //create the row
@@ -104,7 +104,7 @@ Build.prototype.render = function(a){
   trEl.appendChild(thEl);
   console.log(trEl);
 
-  for (var d = 0; d < allLoc[a].cookiesPerHr.length; d++){
+  for (var d = 0; d < storeLocations[a].cookiesPerHr.length; d++){
     var tdEl = document.createElement('td'); //create a cell for each column of time
     tdEl.textContent = this.cookiesPerHr[d];
     trEl.appendChild(tdEl);
@@ -125,7 +125,7 @@ function createFooter() {
   trEl.appendChild(thEl);
   console.log(trEl);
 
-  for (var t = 0; t < hoursOpen.length; t++){
+  for (var t = 0; t < storeHours.length; t++){
     var tdEl = document.createElement('th'); //create a cell for each column of time
     tdEl.textContent = hourTot[t];
     trEl.appendChild(tdEl);
@@ -139,15 +139,15 @@ function createFooter() {
 }
 
 function renderAll() {
-  for (var r = 0; r < allLoc.length; r++) {
-    allLoc[r].render(r);
+  for (var r = 0; r < storeLocations.length; r++) {
+    storeLocations[r].render(r);
   }
 }
 
 // pre-loads the calculated info into the locations and renders the inital table
 function initalBuild(){
-  buildHours (start,finish);
-  for (var f = 0; f < allLoc.length; f++) {
+  createStoreHours (openTime,closedTime);
+  for (var f = 0; f < storeLocations.length; f++) {
     fillInfo(f);
   }
   getTotals();
@@ -170,9 +170,9 @@ function handleFormSubmit(event) {
   var newMax = parseInt(event.target.newMax.value);
   var newAvg = parseFloat(event.target.newAvg.value);
 
-  new Build(newName,newMin, newMax, newAvg);
+  new BuildStore(newName,newMin, newMax, newAvg);
 
-  var last = allLoc.length-1;
+  var last = storeLocations.length-1;
 
   fillInfo(last);
 
