@@ -1,92 +1,94 @@
 'use strict';
 
 // Global variables
-var allLoc = [], hoursOpen = [], hourTot = [];
-var start = 6, finish = 20, hourlyLocTot = 0, grandTotal = 0;
+var allStores = [], storeHours = [], openTime = 6, closedTime = 20;
+var grandTotalallCookies, totalCookiesPerHour = []; //used 24hr time for easier calculations of am/pm
 
 
-// Constructor function called "Build" to create individual locations
-function Build(name, minCust, maxCust, avgCookies) {
-  this.name = name;
-  this.minCust = minCust;
-  this.maxCust = maxCust;
-  this.avgCookies = avgCookies;
+// Constructor function called "BuildStore" to create individual locations
+function BuildStore(storeName, minimumCustomers, maximumCustomers, averageCookies) {
+  this.storeName = storeName;
+  this.minimumCustomers = minimumCustomers;
+  this.maximumCustomers = maximumCustomers;
+  this.averageCookies = averageCookies;
   this.CustPerHr = [];
   this.cookiesPerHr = [];
   this.totCookies = 0;
-  allLoc.push(this);
+  allStores.push(this);
 }
 
 // Construct each location with known details
-new Build('First and Pike', 23, 65, 6.3);
-new Build('SeaTac Airport', 3, 24, 1.2);
-new Build('Seattel Center', 11, 38, 3.7);
-new Build('Capitol Hill', 20, 38, 2.3);
-new Build ('Alki', 2, 16, 4.6);
+new BuildStore('First and Pike', 23, 65, 6.3);
+new BuildStore('SeaTac Airport', 3, 24, 1.2);
+new BuildStore('Seattel Center', 11, 38, 3.7);
+new BuildStore('Capitol Hill', 20, 38, 2.3);
+new BuildStore ('Alki', 2, 16, 4.6);
 
-//Fill Hours Array - 24hr clock to determine am/pm
-function buildHours(open, closed) {
-  for (var h = 0; h <= closed - open - 1; h++) {
-    if (h + open < 12) {
-      hoursOpen.push(h + open + 'am');
-    } else if (h + open === 12) {
-      hoursOpen.push(h + open + 'pm');
+// Create an array for store hours
+(function(open, closed) {
+  for (var time = 0 + open; time <= closed - 1; time++) {
+    if (time < 12) {
+      storeHours.push(`${time}am`);
+    } else if (time === 12) {
+      storeHours.push(`${time}pm`);
     } else {
-      hoursOpen.push((h + open - 12) + 'pm');
+      storeHours.push(`${time - 12}pm`);
     }
   }
-}
+})(openTime,closedTime); // Runs without prompting
 
 // Populate Customers, cookies, and totals per hour data into the location
-function fillInfo(f) {
-  for (var h = 0; h < hoursOpen.length; h++) {
-    hourTot[h] = 0; // establish begining cookies for each hour
+function calculateStoreInfo(storeNumber) {
+  for (var time = 0; time < storeHours.length; time++) {
+    totalCookiesPerHour[time] = 0; // establish begining total
 
     // Customers per hour
-    var min = Math.ceil(allLoc[f].minCust);
-    var max = Math.floor(allLoc[f].maxCust);
-    allLoc[f].CustPerHr.push(Math.floor(Math.random() * (max - min + 1)) + min);
+    var min = Math.ceil(allStores[storeNumber].minimumCustomers);
+    var max = Math.floor(allStores[storeNumber].maximumCustomers);
+    allStores[storeNumber].CustPerHr.push(Math.floor(Math.random() * (max - min + 1)) + min);
 
     // Cookies Sold per hour
-    allLoc[f].cookiesPerHr.push(Math.ceil(allLoc[f].CustPerHr[h] * allLoc[f].avgCookies));
+    allStores[storeNumber].cookiesPerHr.push(Math.ceil(allStores[storeNumber].CustPerHr[time] * allStores[storeNumber].averageCookies));
 
     // Hourly all locations
-    allLoc[f].totCookies += allLoc[f].cookiesPerHr[h]; //Daily per location
+    allStores[storeNumber].totCookies += allStores[storeNumber].cookiesPerHr[time]; //Daily per location
 
   }
 }
-function getTotals() {
-  grandTotal = 0;
-  for (var h = 0; h < hoursOpen.length; h++) {
-    hourTot[h] = 0;
-    hourlyLocTot = 0;
-    for (var f = 0; f < allLoc.length; f++) {
-      hourlyLocTot += allLoc[f].cookiesPerHr[h]; // Total hourly
-      grandTotal += allLoc[f].cookiesPerHr[h]; //grand total all locations
+function getCookieTotals() {
+  var hourlyStoreTotal = 0;
+  grandTotalallCookies = 0;
+  for (var time = 0; time < storeHours.length; time++) {
+    totalCookiesPerHour[time] = 0;
+    hourlyStoreTotal = 0;
+    for (var storeNumber = 0; storeNumber < allStores.length; storeNumber++) {
+      hourlyStoreTotal += allStores[storeNumber].cookiesPerHr[time]; // Total hourly
+      grandTotalallCookies += allStores[storeNumber].cookiesPerHr[time]; //grand total all locations
     }
-    hourTot[h] += hourlyLocTot; //add to the array for the footer
+    totalCookiesPerHour[time] += hourlyStoreTotal; //add to the array for the footer
   }
 }
 
 // Declare variables for rendering the table
 var salesTable = document.getElementById('salesData');
-var addForm = document.getElementById('newStoreForm');
+var addNewStoreForm = document.getElementById('addNewStoreForm');
 
-// Render the Header
-function createHeader() {
+// Render the Sales Table Header
+function createSalesTableHeader() {
   // Create the first header column
   var trEl = document.createElement('tr'); //create the row
   var thEl = document.createElement('th'); //create the first column cell
   thEl.textContent = 'Location';
   trEl.appendChild(thEl);
 
-  for (var t = 0; t < hoursOpen.length; t++){
+  // Create the header body
+  for (var t = 0; t < storeHours.length; t++){
     var tdEl = document.createElement('th'); //create a cell for each column of time
-    tdEl.textContent = hoursOpen[t];
+    tdEl.textContent = storeHours[t];
     trEl.appendChild(tdEl);
   }
 
-  // Attach last header column
+  // Create last header column
   thEl = document.createElement('th');
   thEl.textContent = 'Daily Total';
   trEl.appendChild(thEl);
@@ -94,17 +96,17 @@ function createHeader() {
   salesTable.appendChild(trEl);
 }
 
-// Render the main data of the table
-Build.prototype.render = function(a){
+// Render the main data of the projected sales table
+BuildStore.prototype.render = function(a){
 
   // Attach the location Name
   var trEl = document.createElement('tr'); //create the row
   var thEl = document.createElement('th'); //create the first column
-  thEl.textContent = this.name;
+  thEl.textContent = this.storeName;
   trEl.appendChild(thEl);
   console.log(trEl);
 
-  for (var d = 0; d < allLoc[a].cookiesPerHr.length; d++){
+  for (var d = 0; d < allStores[a].cookiesPerHr.length; d++){
     var tdEl = document.createElement('td'); //create a cell for each column of time
     tdEl.textContent = this.cookiesPerHr[d];
     trEl.appendChild(tdEl);
@@ -118,73 +120,79 @@ Build.prototype.render = function(a){
   salesTable.appendChild(trEl);
 };
 
-function createFooter() {
+function createSalesTableFooter() {
   var trEl = document.createElement('tr'); //create the row
   var thEl = document.createElement('th'); //create the first column cell
   thEl.textContent = 'TOTAL';
   trEl.appendChild(thEl);
   console.log(trEl);
 
-  for (var t = 0; t < hoursOpen.length; t++){
+  for (var t = 0; t < storeHours.length; t++){
     var tdEl = document.createElement('th'); //create a cell for each column of time
-    tdEl.textContent = hourTot[t];
+    tdEl.textContent = totalCookiesPerHour[t];
     trEl.appendChild(tdEl);
   }
   //Attach grand total to footer
   thEl = document.createElement('th');
-  thEl.textContent = grandTotal;
+  thEl.textContent = grandTotalallCookies;
   trEl.appendChild(thEl);
 
   salesTable.appendChild(trEl);
 }
 
-function renderAll() {
-  for (var r = 0; r < allLoc.length; r++) {
-    allLoc[r].render(r);
+function createSalesTableBody() {
+  for (var storeNumber = 0; storeNumber < allStores.length; storeNumber++) {
+    allStores[storeNumber].render(storeNumber);
   }
 }
 
-// pre-loads the calculated info into the locations and renders the inital table
-function initalBuild(){
-  buildHours (start,finish);
-  for (var f = 0; f < allLoc.length; f++) {
-    fillInfo(f);
-  }
-  getTotals();
-  createHeader();
-  renderAll();
-  createFooter();
+function createSalesTable() {
+  salesTable.innerHTML = ''; //clear previous tables before rendering
+  getCookieTotals();
+  createSalesTableHeader();
+  createSalesTableBody();
+  createSalesTableFooter();
 }
 
-initalBuild();
+// pre-loads the calculated info into the allStores array and renders the inital table
+// otherwise skips the pre-load and appends only the new store
+var newStore = false;
+
+function getMissingStoreData(){
+  if (newStore === false) {
+    for (var storeNumber = 0; storeNumber < allStores.length; storeNumber++) {
+      calculateStoreInfo(storeNumber);
+    }
+    createSalesTable();
+  } else createSalesTable();
+}
+
+getMissingStoreData();
 
 // Form Event Listeners
 // Submit Button
-addForm.addEventListener('submit',handleFormSubmit);
+addNewStoreForm.addEventListener('submit',handleFormSubmit);
 
 function handleFormSubmit(event) {
   event.preventDefault(); //prevent reload
 
-  var newName = event.target.newName.value;
-  var newMin = parseInt(event.target.newMin.value);
-  var newMax = parseInt(event.target.newMax.value);
-  var newAvg = parseFloat(event.target.newAvg.value);
+  var newStoreName = event.target.newStoreName.value;
+  var newMinimumCustomers = parseInt(event.target.newMinimumCustomers.value);
+  var newMaximumCustomers = parseInt(event.target.newMaximumCustomers.value);
+  var newAverageCookies = parseFloat(event.target.newAverageCookies.value);
 
-  new Build(newName,newMin, newMax, newAvg);
+  new BuildStore(newStoreName,newMinimumCustomers, newMaximumCustomers, newAverageCookies);
 
-  var last = allLoc.length-1;
+  var newStoreNumber = allStores.length-1;
 
-  fillInfo(last);
+  newStore = true; // tells the builder not to reset the previous store data
 
-  salesTable.innerHTML = ''; //clear previous tables before rendering
-  createHeader();
-  renderAll();
-  getTotals();
-  createFooter();
+  calculateStoreInfo(newStoreNumber);
+  createSalesTable();
 
   // Clear form values for next entry
-  event.target.newName.value = null;
-  event.target.newMin.value = null;
-  event.target.newMax.value = null;
-  event.target.newAvg.value = null;
+  event.target.newStoreName.value = null;
+  event.target.newMinimumCustomers.value = null;
+  event.target.newMaximumCustomers.value = null;
+  event.target.newAverageCookies.value = null;
 }

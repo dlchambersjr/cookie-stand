@@ -7,3 +7,6 @@ logs
 
 # Optional eslint cache
 .eslintcache
+
+#Do not include Photoshop Files
+.psd
