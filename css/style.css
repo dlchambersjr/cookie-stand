@@ -55,12 +55,28 @@ nav {
   text-align: center;
 }
 
-Nav li {
+nav li {
   display: inline-block;
   margin-right: 25px;
   padding: 10px;
+ }
+
+nav a:link, a:visited {
+  padding: 10px;
   background-color:#aa4c2d;
-  color: white;
+  color: #ffffff;
+  box-shadow: 2px 2px 2px grey;
+  text-align: center;
+  text-decoration: none;
+}
+
+nav a:active, a:hover  {
+  background-color: #c8ba92;
+}
+
+nav li:nth-child(5) {
+  font-weight: bold;
+  font-size: 125%;
 }
 
 nav #order-online-button {
@@ -68,10 +84,10 @@ nav #order-online-button {
   background-color: green;
 }
 
+
 section {
   width: 600px;
   margin: 10px 0px;
-  border: 1px dotted black;
   padding: 10px;
   float: left;
 }
@@ -82,7 +98,6 @@ section p:first-child {
   border: 5px solid #aa4c2d;
   border-radius: 10px;
   background-color: #c8ba92;
-  /* Margin: 10px; */
   padding: 5px;
 }
 
@@ -91,8 +106,8 @@ section p {
 }
 
 #chinook {
-  float:right;
-  padding: 5px;
+  margin: auto;
+  padding: 25px;
 }
 
 #family-pic {
@@ -106,13 +121,13 @@ section p {
 
 aside {
   width: 290px;
-  margin: 10px;
-  border: 1px dotted black;
+  margin: 10px auto;
   padding: 10px;
-  float:right;
+  float: right;
+  text-align: center;
 }
 
-aside p:first-child {
+aside p:first-of-type {
   font-family: 'Pacifico', cursive;
   font-size:24px;
   border: 5px solid #aa4c2d;
@@ -123,10 +138,9 @@ aside p:first-child {
 }
 
 .store-pics {
-  width: 60%;
-  /* float:left; */
-  margin: 15px auto;
-  text-align: center;
+  width: 45%;
+  margin: 15px 70px;
+  border: 3px solid black;
 }
 
 footer {
@@ -148,12 +162,40 @@ footer li {
 
 /* Used for sales.html */
 form {
-  border: 1px solid black;
+  float: left;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
-  margin: 25px;
+  font-size: 12px;
   border: 5px solid #aa4c2d;
   border-radius: 10px;
   background-color: #c8ba92;
+  margin: 0px 15px 0px 0px;
+}
+
+form legend {
+  font-family: Pacifico;
+  font-size: 15px;
+  Margin: 0px 0px 10px 5px;
+  padding: 15px 0px
+
+}
+
+form label {
+  font-weight: bold;
+  padding: 0px 0px 5px 15px;
+}
+
+form input {
+  Margin: 0px 12px 5px 15px;
+  width: 195px;
+}
+
+.button {
+  background-color: #49431d;
+  height: 50px;
+  width: 128px;
+  margin: 10px auto;
+  padding: 10px;
+  color: white;
 }
 
 #form-data-entry {
@@ -164,19 +206,33 @@ form {
 table {
   border: 1px solid black;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size:10px;
   color: #49431d;
   text-align: center;
   margin: auto;
+  overflow: scroll;
 }
 
 th {
   border: 1px solid black;
-  background-color:#c4a472;
+  background-color:#c8ba92;
+  color:black;
+  font-weight:bold;
+  padding:5px;
+}
+
+table th:last-child {
+  border: 1px solid black;
+  background-color:#fdbb06;
+  color:black;
   font-weight:bold;
   padding:5px;
 }
 
 td {
   border: 1px solid black;
+  background-color: white;
+  color:black;
   text-align: center;
+  font-weight: bold;
 }

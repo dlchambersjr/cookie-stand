@@ -11,3 +11,7 @@ This is the beginning of trying to create a README.MD file so I can begin to lea
 - Renamed all variables to comply with "Clean Code" concepts
 - Worked on making the code DRY... some success.
 
+## 2018.08.19
+Worked on more CSS to finetune the project.
+
+
