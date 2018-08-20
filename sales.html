@@ -19,23 +19,31 @@
 
     </header>
 
+    
+
+    <div>
     <form id="addNewStoreForm">
         <fieldset>  
           <legend>
             Add New Store
           </legend>
           <div id="form-data-entry">
-            <label>Store Name: <input name="newStoreName" type="text" size="25" required /></label>
-            <label>Minimum Customers:<input name="newMinimumCustomers" type="number" min="1" size="3" required /></label>
-            <label>Maximum Customers: <input  name="newMaximumCustomers" type="number" min="1" size="3" required /></label>
-            <label>Average Cookies per Customer: <input name="newAverageCookies" type="number" min="1" step=".1" size="3" required /></label>
-            <button class=""  type="submit">Add New Store</button>
+            <label for="newStoreName">Store Name: </label>
+            <input name="newStoreName" type="text" size="25" required />
+            <label for="newMinimumCustomers">Minimum Customers:</label>
+            <input name="newMinimumCustomers" type="number" min="1" size="3" required />
+            <label for="newMaximumCustomers">Maximum Customers: </label>
+            <input  name="newMaximumCustomers" type="number" min="1" size="3" required />
+            <label for="newAverageCookies">Average Cookies<br/>per Customer: </label>
+            <input name="newAverageCookies" type="number" min="1" step=".1" size="3" required />
+            <button class="button"  type="submit">Add New Store</button>
           </div>
         </fieldset>
       </form>   
-
-    <table id="salesData"></table>
-
+    </div>
+    <div>
+      <table id="salesData"></table>
+    </div>
     <script src="js/app.js" type="text/javascript"></script>
 
   </body>

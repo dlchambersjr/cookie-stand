@@ -113,9 +113,9 @@ BuildStore.prototype.render = function(a){
   }
 
   //Attach the location total for the day
-  tdEl = document.createElement('td');
-  tdEl.textContent = this.totCookies;
-  trEl.appendChild(tdEl);
+  thEl = document.createElement('th');
+  thEl.textContent = this.totCookies;
+  trEl.appendChild(thEl);
 
   salesTable.appendChild(trEl);
 };
